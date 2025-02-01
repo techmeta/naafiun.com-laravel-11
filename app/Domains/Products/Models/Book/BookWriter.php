@@ -1,0 +1,32 @@
+<?php
+
+namespace App\Domains\Products\Models\Book;
+
+use App\Domains\Auth\Models\User;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class BookWriter extends Model
+{
+  use HasFactory, SoftDeletes;
+
+  protected $table = 'boi_writers';
+
+  public $primaryKey = 'id';
+
+  public $timestamps = true;
+
+  protected $guarded = [];
+
+
+  public function user()
+  {
+    return $this->belongsTo(User::class);
+  }
+
+  public function books()
+  {
+    return $this->belongsToMany(Book::class, 'boi_book_writers', 'writer_id', 'book_id');
+  }
+}
