@@ -15,8 +15,16 @@ Route::group(['prefix' => 'v1', 'as' => 'v1.'], function () {
     Route::get('/banners', [GeneralController::class, 'banners']);
     Route::get('/get-section-products', [CatalogController::class, 'getSectionProducts']);
     Route::get('/get-filtered-products', [CatalogController::class, 'getFilteredProducts']);
+    Route::get('/get-attribute/{type}', [CatalogController::class, 'getAttributeItems']);
+    Route::get('/get-subjects', [CatalogController::class, 'getSubjects']);
+    Route::get('/get-writers', [CatalogController::class, 'getWriters']);
+    Route::get('/get-publishers', [CatalogController::class, 'getPublishers']);
     Route::get('/product/{sku}', [CatalogController::class, 'productDetails']);
     Route::get('/related-products/{item_sku}', [CatalogController::class, 'relatedProducts']);
+
+
+    Route::get('/faqs', [GeneralController::class, 'faqPages']);
+    Route::get('/page/{slug}', [GeneralController::class, 'singlePages']);
 
 
     // cart system
@@ -31,8 +39,8 @@ Route::group(['prefix' => 'v1', 'as' => 'v1.'], function () {
         Route::post('/payment-method', [CustomerCartController::class, 'addPaymentMethod']);
         Route::post('/place-order', [CustomerCartController::class, 'placedOrder']);
 
-//         below not tested
 
+//         below not tested
         Route::post('/store-credit', [CustomerCartController::class, 'storeCredit'])->middleware('auth:sanctum');  // not functional
         Route::post('/cut-of-time', [CustomerCartController::class, 'cutOfTime'])->middleware('auth:sanctum');  // not functional
         Route::post('/shipping', [CustomerCartController::class, 'addShippingAddress'])->middleware('auth:sanctum'); // not functional
@@ -47,9 +55,6 @@ Route::group(['prefix' => 'v1', 'as' => 'v1.'], function () {
 
     Route::post('/login-as-customer/{token}', [GeneralController::class, 'loginAsCustomer']);
 
-
-    Route::get('/faqs', [GeneralController::class, 'faqPages']);
-    Route::get('/page/{slug}', [GeneralController::class, 'singlePages']);
 
     Route::post('/contact/message', [GeneralController::class, 'contactMessageSend']);
 

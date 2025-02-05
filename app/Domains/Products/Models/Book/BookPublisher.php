@@ -2,30 +2,31 @@
 
 namespace App\Domains\Products\Models\Book;
 
-use App\Domains\Auth\Models\User;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class BookPublisher extends Model
 {
-  use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes;
 
-  protected $table = 'boi_publishers';
+    protected $table = 'boi_publishers';
 
-  public $primaryKey = 'id';
+    public $primaryKey = 'id';
 
-  public $timestamps = true;
+    public $timestamps = true;
 
-  protected $guarded = [];
+    protected $guarded = [];
 
-  public function user()
-  {
-    return $this->belongsTo(User::class);
-  }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
-  public function books()
-  {
-    return $this->belongsToMany(Book::class, 'boi_book_publisher', 'publisher_id', 'book_id');
-  }
+    public function books(): BelongsToMany
+    {
+        return $this->belongsToMany(Book::class, 'boi_book_publisher', 'publisher_id', 'book_id');
+    }
 }

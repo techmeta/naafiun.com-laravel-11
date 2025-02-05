@@ -125,19 +125,39 @@ class BookResource extends JsonResource
             $data['writers'] = WriterResource::collection($this->writers);
         }
         if (hasArrayKeyOrData('translators', $relations)) {
-            $data['translators'] = $this->translators;
+            $data['translators'] = $this->translators->map(function ($data) {
+                unset($data['pivot']);
+                $data['url'] = $data->slug ? "/book?publisher={$data->slug}" : "/book";
+                return $data;
+            });;
         }
         if (hasArrayKeyOrData('publishers', $relations)) {
-            $data['publishers'] = $this->publishers;
+            $data['publishers'] = $this->publishers->map(function ($data) {
+                unset($data['pivot']);
+                $data['url'] = $data->slug ? "/book?publisher={$data->slug}" : "/book";
+                return $data;
+            });
         }
         if (hasArrayKeyOrData('subjects', $relations)) {
-            $data['subjects'] = $this->subjects;
+            $data['subjects'] = $this->subjects->map(function ($data) {
+                unset($data['pivot']);
+                $data['url'] = $data->slug ? "/book?subject={$data->slug}" : "/book";
+                return $data;
+            });;
         }
         if (hasArrayKeyOrData('editors', $relations)) {
-            $data['editors'] = $this->editors;
+            $data['editors'] = $this->editors->map(function ($data) {
+                unset($data['pivot']);
+                $data['url'] = $data->slug ? "/book?editor={$data->slug}" : "/book";
+                return $data;
+            });;
         }
         if (hasArrayKeyOrData('transcriptions', $relations)) {
-            $data['transcriptions'] = $this->editors;
+            unset($data['pivot']);
+            $data['transcriptions'] = $this->transcriptions->map(function ($data) {
+                $data['url'] = $data->slug ? "/book?transcription={$data->slug}" : "/book";
+                return $data;
+            });;
         }
         if (hasArrayKeyOrData('currencyIcon', $relations)) {
             $data['currency'] = $relations['currencyIcon'];

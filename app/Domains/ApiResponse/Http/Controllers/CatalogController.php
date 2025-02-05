@@ -30,15 +30,6 @@ class CatalogController extends Controller
         return $this->success($products, 'product load successfully');
     }
 
-
-//    =============== below are not implemented ==============
-
-    public function storeDetails($slug): JsonResponse
-    {
-        $product = $this->catalogService->store($slug);
-        return $this->success($product, 'fetch store details');
-    }
-
     public function getSectionProducts(): JsonResponse
     {
         $products = $this->catalogService->section_products();
@@ -48,14 +39,45 @@ class CatalogController extends Controller
     public function getFilteredProducts(): JsonResponse
     {
         $products = $this->catalogService->filtered_products();
-        return $this->success($products, 'product load successfully');
+        return $this->success($products, 'data load successfully');
     }
 
-    public function getProductBrands()
+    public function getSubjects(): JsonResponse
     {
-        $brands = $this->catalogService->product_brands();
-        return response(['brands' => $brands]);
+        $data = $this->catalogService->bookSubjects();
+        return $this->success(['items' => $data], 'data load successfully');
     }
+
+    public function getWriters(): JsonResponse
+    {
+        $data = $this->catalogService->bookWriters();
+        return $this->success(['items' => $data], 'data load successfully');
+    }
+
+    public function getPublishers(): JsonResponse
+    {
+        $data = $this->catalogService->bookPublisher();
+        return $this->success(['items' => $data], 'data load successfully');
+    }
+
+    public function getAttributeItems($type): JsonResponse
+    {
+        $data = $this->catalogService->bookAttributes($type);
+        return $this->success($data, 'data load successfully');
+    }
+
+
+//    =============== below are not implemented ==============
+
+    public function storeDetails($slug): JsonResponse
+    {
+        $product = $this->catalogService->store($slug);
+        return $this->success($product, 'fetch store details');
+    }
+
+
+//     ================ below are not implemented =============
+
 
     public function featuredProducts()
     {

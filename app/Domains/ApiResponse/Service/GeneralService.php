@@ -4,6 +4,7 @@ namespace App\Domains\ApiResponse\Service;
 
 use App\Domains\ApiResponse\Resources\SettingsResource;
 use App\Domains\Page\Models\Page;
+use App\Domains\Page\Models\Post;
 use App\Domains\Products\Models\Taxonomy;
 use App\Domains\Settings\Models\Banner;
 use App\Domains\Settings\Models\Setting;
@@ -102,21 +103,28 @@ class GeneralService
 
     public function faqPages()
     {
-        return Banner::query()
-            ->whereNotNull('active')
-            ->limit(10)
-            ->latest()
+        return Post::where('post_status', 'publish')
+            ->where('post_type', 'faq')
             ->get()
             ->map(function ($item) {
                 $data = $item;
                 $data['post_title'] = $item->title ?: null;
-                $data['post_thumb'] = $item->banner_image ? asset($item->banner_image) : null;
+                $data['post_thumb'] = $item->post_thumb ? asset($item->post_thumb) : null;
                 return $data;
             });
     }
 
     public function get_page($slug)
     {
-        return Page::query()->where('status', 'publish')->where('slug', $slug)->first();
+        return Page::where('status', 'publish')
+            ->where('slug', $slug)
+            ->get()
+            ->map(function ($item) {
+                $data = $item;
+                $data['post_title'] = $item->title ?: null;
+                $data['post_thumb'] = $item->post_thumb ? asset($item->post_thumb) : null;
+                return $data;
+            })
+            ->first();
     }
 }

@@ -8,6 +8,9 @@ use App\Domains\ApiResponse\Resources\RecentViewProductResource;
 use App\Domains\ApiResponse\Resources\StoreResource;
 use App\Domains\Auth\Models\User;
 use App\Domains\Products\Models\Book\Book;
+use App\Domains\Products\Models\Book\BookPublisher;
+use App\Domains\Products\Models\Book\BookSubject;
+use App\Domains\Products\Models\Book\BookWriter;
 use App\Domains\Products\Models\Brand;
 use App\Domains\Products\Models\Product;
 use App\Domains\Products\Models\RecentViewLog;
@@ -111,9 +114,9 @@ class CatalogService
 
     public function filtered_products(): array
     {
-        $subjects = request('subject', []);
-        $writers = request('writer', []);
-        $publishers = request('publisher', []);
+        $subjects = request('subjects', []);
+        $writers = request('writers', []);
+        $publishers = request('publishers', []);
 
         $hasSubjects = $subjects ? count($subjects) : 0;
         $hasWriters = $writers ? count($writers) : 0;
@@ -137,7 +140,7 @@ class CatalogService
         }
 
         $books = $books->orderByDesc('created_at')
-            ->paginate(18);
+            ->paginate(16);
 
         return BookResource::collection($books, ['simple', 'writers'])->response()->getData(true);
     }
@@ -156,24 +159,92 @@ class CatalogService
     }
 
 
-//    ============ Blow methods not tested =================
-
-    public function product_brands()
+    public function bookWriters($isTop = false)
     {
-        return Brand::query()
-            ->whereNotNull('top')
-            ->whereNotNull('active')
-            ->orderBy('id')
-            ->get()
-            ->map(function ($brand) {
-                $data['id'] = $brand->id;
-                $data['name'] = $brand->name;
-                $data['brand_url'] = $brand->brand_url;
-                $data['slug'] = $brand->slug;
-                $data['logo'] = asset($brand->logo);
+        $data = BookWriter::whereNotNull('active');
+        if ($isTop) {
+            $data = $data->whereNotNull('top');
+        }
+
+        return $data->orderBy('slug') // secondary ordering by slug
+        ->get()
+            ->map(function ($item) {
+                $data['id'] = $item->id;
+                $data['name'] = $item->name;
+                $data['slug'] = $item->slug;
+                $data['books_count'] = $item->books_count;
+                $data['top'] = $item->top;
+                $data['meta_title'] = $item->meta_title;
+                $data['meta_description'] = $item->meta_description;
+                $data['picture'] = $item->picture ? asset($item->picture) : null;
                 return $data;
             });
     }
+
+    public function bookPublisher($isTop = false)
+    {
+        $data = BookPublisher::whereNotNull('active');
+        if ($isTop) {
+            $data = $data->whereNotNull('top');
+        }
+        return $data->orderBy('slug')
+            ->get()
+            ->map(function ($item) {
+                $data['id'] = $item->id;
+                $data['name'] = $item->name;
+                $data['slug'] = $item->slug;
+                $data['books_count'] = $item->books_count;
+                $data['top'] = $item->top;
+                $data['meta_title'] = $item->meta_title;
+                $data['meta_description'] = $item->meta_description;
+                $data['picture'] = $item->logo ? asset($item->logo) : null;
+                return $data;
+            });
+    }
+
+    public function bookSubjects($isTop = false)
+    {
+        $data = BookSubject::whereNotNull('active');
+        if ($isTop) {
+            $data = $data->whereNotNull('top');
+        }
+        return $data->orderBy('slug')
+            ->get()
+            ->map(function ($item) {
+                $data['id'] = $item->id;
+                $data['name'] = $item->name;
+                $data['slug'] = $item->slug;
+                $data['books_count'] = $item->books_count;
+                $data['top'] = $item->top;
+                $data['meta_title'] = $item->meta_title;
+                $data['meta_description'] = $item->meta_description;
+                $data['picture'] = $item->logo ? asset($item->logo) : null;
+                return $data;
+            });
+    }
+
+    public function bookAttributes($type): array
+    {
+        $type = $type ?: 'all';
+        $items = [];
+        if ($type == 'all') {
+            $items['subjects'] = $this->bookSubjects(true);
+            $items['writers'] = $this->bookWriters(true);
+            $items['publishers'] = $this->bookPublisher(true);
+        } else if ($type == 'writers') {
+            $items['writers'] = $this->bookWriters(true);
+        } else if ($type == 'subjects') {
+            $items['subjects'] = $this->bookSubjects(true);
+        } else if ($type == 'publishers') {
+            $items['publishers'] = $this->bookPublisher(true);
+        }
+
+        return $items;
+    }
+
+
+//    ============ Blow methods not tested =================
+
 
     public function featured_products(): array
     {

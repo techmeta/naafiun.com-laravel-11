@@ -29,6 +29,7 @@ class WriterResource extends JsonResource
             "id" => $this->id,
             "name" => $this->name,
             "slug" => $this->slug,
+            "url" => $this->slug ? "/book?writer={$this->slug}" : '/book',
             "top" => $this->top,
             "picture" => $this->picture ? asset($this->picture) : null,
         ];
