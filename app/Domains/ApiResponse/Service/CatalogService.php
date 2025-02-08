@@ -443,38 +443,15 @@ class CatalogService
 
     public function search_result(): array
     {
-        $limit = request('limit', 24);
-        $sort = request('sort');
-        $min = request('min');
-        $max = request('max', 999999999);
+        $limit = request('limit', 15);
         $keyWord = request('search');
-        $keyWord = str_replace(' ', '%', $keyWord);
-        $query = Product::query()
-            ->where('status', 'publish')
-            ->where('name', 'like', "%$keyWord%")
-            ->orWhere('short_description', 'like', "%$keyWord%");
-//            ->orWhere('attributes', 'like', "%$keyWord%");
 
-        if ($min && $max) {
-            $query = $query->whereBetween('discount_price', [$min, $max]);
-        }
-        if ($sort == 'low-to-high') {
-            $query = $query->orderBy('discount_price');
-        } else if ($sort == 'high-to-low') {
-            $query = $query->orderBy('discount_price', 'desc');
-        } else if ($sort == 'best-sale') {
-            $query = $query->orderBy('order_items_count');
-        } else {
-            $query = $query->orderByRaw('name like ? desc', $keyWord)
-                ->orderByRaw('instr(name,?) asc', $keyWord);
-//                ->orderBy('name');
-        }
-
-        $query = $query->paginate($limit);
-        return BookResource::collection($query)->response()->getData(true);
+        $query = Book::search($keyWord)->paginate($limit);
+        return BookResource::collection($query, ['simple'])->response()->getData(true);
     }
 
-    public function store($slug): StoreResource
+    public
+    function store($slug): StoreResource
     {
         $store = Seller::query()
             ->with(['user'])
@@ -494,7 +471,8 @@ class CatalogService
         return StoreResource::single($store, ['simple', 'products' => $products]);
     }
 
-    public function uploadProductGalleryUpload(): array
+    public
+    function uploadProductGalleryUpload(): array
     {
         if (!request()->hasFile('gallery')) {
             return [

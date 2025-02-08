@@ -22,6 +22,10 @@ Route::group(['prefix' => 'v1', 'as' => 'v1.'], function () {
     Route::get('/product/{sku}', [CatalogController::class, 'productDetails']);
     Route::get('/related-products/{item_sku}', [CatalogController::class, 'relatedProducts']);
 
+    // searching products api
+    Route::get('/search', [CatalogController::class, 'getSearchResult']);
+    Route::post('/search/suggestion', [CatalogController::class, 'searchSuggestion']);
+
 
     Route::get('/faqs', [GeneralController::class, 'faqPages']);
     Route::get('/page/{slug}', [GeneralController::class, 'singlePages']);
@@ -78,9 +82,6 @@ Route::group(['prefix' => 'v1', 'as' => 'v1.'], function () {
     Route::get('/category-products/{slug}', [CatalogController::class, 'categoryProducts']);
     Route::get('/store/{slug}', [CatalogController::class, 'storeDetails']);
 
-    // searching products api
-    Route::get('/search', [CatalogController::class, 'getSearchResult']);
-    Route::post('/search/suggestion', [CatalogController::class, 'searchSuggestion']);
 
     Route::get('/featured-products', [CatalogController::class, 'featuredProducts']);
     Route::get('/loving-products', [CatalogController::class, 'lovingProducts']);
