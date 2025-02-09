@@ -33,7 +33,7 @@ class BookResource extends JsonResource
         $book_cover = $this->book_cover_image ? asset($this->book_cover_image) : '';
 
         // Calculate the discount rate
-        $discount_rate = (($sale_price - $discount_price) / $sale_price) * 100;
+        $discount_rate = $discount_price && $sale_price > $discount_price ? (($sale_price - $discount_price) / $sale_price) * 100 : 0;
         $discount_rate = round($discount_rate);
 
 
