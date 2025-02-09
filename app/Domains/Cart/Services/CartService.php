@@ -56,6 +56,7 @@ class CartService
                     'shipping_address' => $last_order?->shipping_address,
                     'user_id' => $auth_id ?: NULL,
                     'payment_method' => 'cod',
+                    'shipping_cost' => 59,
                 ]);
         }
         if ($cart) {
@@ -67,6 +68,7 @@ class CartService
                 $last_order = Order::query()->where('user_id', $auth_id)->orderByDesc('id')->first();
                 $cart->shipping_address = $last_order?->shipping_address;
                 $cart->payment_method = 'cod';
+                $cart->shipping_cost = 59;
                 $cart->save();
             }
         }
@@ -96,8 +98,9 @@ class CartService
         $quantity = request('quantity');
         $config_sku = $product->id;
         $regular_price = $product->sale_price;
-        $sale_price = $product->discount_price;
-        $discount_amt = ((int)$regular_price - (int)$sale_price);
+        $sale_price =$product->discount_price;
+        $sale_price = $sale_price && $regular_price > $sale_price ? $sale_price : $regular_price;
+        $discount_amt = $sale_price && $regular_price > $sale_price ? ((int)$regular_price - (int)$sale_price) : 0;
         $discount_amt = max($discount_amt, 0);
         $max_quantity = $product->order_limit;
 
@@ -135,6 +138,7 @@ class CartService
         $itemVariations->save();
 
         $cart->use_credit = null;
+        $cart->shipping_cost = 59;
         $cart->save();
         $cart->refresh();
 
@@ -182,6 +186,7 @@ class CartService
             }
         }
         $cart->use_credit = null;
+        $cart->shipping_cost = 59;
         $cart->save();
         $cart->refresh();
 
@@ -209,6 +214,7 @@ class CartService
             $cart_item->save();
         }
         $cart->use_credit = null;
+        $cart->shipping_cost = 59;
         $cart->save();
         $cart->refresh();
 
