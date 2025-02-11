@@ -161,13 +161,19 @@ class CatalogService
 
     public function bookWriters($isTop = false)
     {
+        $limit = request('limit', 36);
+        $search = request('search');
         $data = BookWriter::whereNotNull('active');
         if ($isTop) {
             $data = $data->whereNotNull('top');
         }
+        if ($search) {
+            $data = $data->where('slug', 'like', "%$search%")
+                ->orWhere('name', 'like', "%$search%");
+        }
 
         return $data->orderBy('slug') // secondary ordering by slug
-        ->get()
+        ->paginate($limit)
             ->map(function ($item) {
                 $data['id'] = $item->id;
                 $data['name'] = $item->name;
@@ -183,12 +189,18 @@ class CatalogService
 
     public function bookPublisher($isTop = false)
     {
+        $limit = request('limit', 36);
+        $search = request('search');
         $data = BookPublisher::whereNotNull('active');
         if ($isTop) {
             $data = $data->whereNotNull('top');
         }
+        if ($search) {
+            $data = $data->where('slug', 'like', "%$search%")
+                ->orWhere('name', 'like', "%$search%");
+        }
         return $data->orderBy('slug')
-            ->get()
+            ->paginate($limit)
             ->map(function ($item) {
                 $data['id'] = $item->id;
                 $data['name'] = $item->name;
@@ -204,12 +216,18 @@ class CatalogService
 
     public function bookSubjects($isTop = false)
     {
+        $limit = request('limit', 36);
+        $search = request('search');
         $data = BookSubject::whereNotNull('active');
         if ($isTop) {
             $data = $data->whereNotNull('top');
         }
+        if ($search) {
+            $data = $data->where('slug', 'like', "%$search%")
+                ->orWhere('name', 'like', "%$search%");
+        }
         return $data->orderBy('slug')
-            ->get()
+            ->paginate($limit)
             ->map(function ($item) {
                 $data['id'] = $item->id;
                 $data['name'] = $item->name;
