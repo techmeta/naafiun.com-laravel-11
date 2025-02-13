@@ -173,7 +173,7 @@ class CatalogService
         }
 
         return $data->orderBy('slug') // secondary ordering by slug
-        ->paginate($limit)
+            ->paginate($limit)
             ->map(function ($item) {
                 $data['id'] = $item->id;
                 $data['name'] = $item->name;
@@ -261,7 +261,22 @@ class CatalogService
     }
 
 
-//    ============ Blow methods not tested =================
+
+    public function recentViewBooks()
+    {
+        $items = request('items');
+        $items = $items ? explode(',', $items) : [];
+
+        $books = Book::with(['writers'])
+            ->where('available', 'yes')
+            ->whereIn('id', $items)
+            ->get();
+
+        return BookResource::collection($books, ['simple', 'writers'])->response()->getData(true);
+    }
+
+
+    //    ============ Blow methods not tested =================
 
 
     public function featured_products(): array
@@ -341,8 +356,6 @@ class CatalogService
                     ->get();
                 $recentItems = $recentItems->merge($recentItems3);
             }
-
-
         }
 
 
@@ -529,14 +542,14 @@ class CatalogService
             $product->pictures = json_encode($pictures);
             $product->save();
 
-//            $data['uuid'] = $uuid;
-//            $data['status'] = 'done';
-//            $data['url'] = asset($small_url);
-//            $data['large_url'] = asset($small_url);
-//            $data['small_url'] = asset($small_url);
-//            $data['response'] = [
-//                'status' => 'success'
-//            ];
+            //            $data['uuid'] = $uuid;
+            //            $data['status'] = 'done';
+            //            $data['url'] = asset($small_url);
+            //            $data['large_url'] = asset($small_url);
+            //            $data['small_url'] = asset($small_url);
+            //            $data['response'] = [
+            //                'status' => 'success'
+            //            ];
 
             $data = [
                 "uuid" => $uuid,

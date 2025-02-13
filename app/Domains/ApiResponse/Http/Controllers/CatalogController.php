@@ -67,7 +67,15 @@ class CatalogController extends Controller
     }
 
 
-//    =============== below are not implemented ==============
+
+    public function getRecentItems(): JsonResponse
+    {
+        $data = $this->catalogService->recentViewBooks();
+        return $this->success($data, 'data load successfully');
+    }
+
+
+    //    =============== below are not implemented ==============
 
     public function storeDetails($slug): JsonResponse
     {
@@ -76,7 +84,7 @@ class CatalogController extends Controller
     }
 
 
-//     ================ below are not implemented =============
+    //     ================ below are not implemented =============
 
 
     public function featuredProducts()

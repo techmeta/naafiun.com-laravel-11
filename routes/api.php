@@ -20,6 +20,7 @@ Route::group(['prefix' => 'v1', 'as' => 'v1.'], function () {
     Route::get('/get-writers', [CatalogController::class, 'getWriters']);
     Route::get('/get-publishers', [CatalogController::class, 'getPublishers']);
     Route::get('/product/{sku}', [CatalogController::class, 'productDetails']);
+    Route::get('/get-recent-view', [CatalogController::class, 'getRecentItems']);
     Route::get('/related-products/{item_sku}', [CatalogController::class, 'relatedProducts']);
 
     // searching products api
@@ -44,7 +45,7 @@ Route::group(['prefix' => 'v1', 'as' => 'v1.'], function () {
         Route::post('/place-order', [CustomerCartController::class, 'placedOrder']);
 
 
-//         below not tested
+        //         below not tested
         Route::post('/store-credit', [CustomerCartController::class, 'storeCredit'])->middleware('auth:sanctum');  // not functional
         Route::post('/cut-of-time', [CustomerCartController::class, 'cutOfTime'])->middleware('auth:sanctum');  // not functional
         Route::post('/shipping', [CustomerCartController::class, 'addShippingAddress'])->middleware('auth:sanctum'); // not functional
@@ -55,7 +56,7 @@ Route::group(['prefix' => 'v1', 'as' => 'v1.'], function () {
     });
 
 
-//     ============== below is not tested ==============
+    //     ============== below is not tested ==============
 
     Route::post('/login-as-customer/{token}', [GeneralController::class, 'loginAsCustomer']);
 
@@ -121,7 +122,7 @@ Route::group(['prefix' => 'v1', 'as' => 'v1.'], function () {
         Route::post('/product-gallery-upload', [CatalogController::class, 'uploadProductGalleryUpload']);
 
 
-//        includeRouteFiles(__DIR__ . '/api');
+        //        includeRouteFiles(__DIR__ . '/api');
 
     });
 });
