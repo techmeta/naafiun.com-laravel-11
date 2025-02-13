@@ -30,6 +30,7 @@ Route::group(['prefix' => 'v1', 'as' => 'v1.'], function () {
 
     Route::get('/faqs', [GeneralController::class, 'faqPages']);
     Route::get('/page/{slug}', [GeneralController::class, 'singlePages']);
+    Route::get('/stead-fast-courier/{order_id}', [GeneralController::class, 'SteadfastCourier']);
 
 
     // cart system

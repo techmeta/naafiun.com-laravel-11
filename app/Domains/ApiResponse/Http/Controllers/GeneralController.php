@@ -5,11 +5,13 @@ namespace App\Domains\ApiResponse\Http\Controllers;
 use App\Domains\ApiResponse\Service\GeneralService;
 use App\Domains\Auth\Models\User;
 use App\Domains\Auth\Notifications\ContactMail;
+use App\Domains\Order\Models\Order;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
+use SteadFast\SteadFastCourierLaravelPackage\Facades\SteadfastCourier;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class GeneralController extends Controller
@@ -119,6 +121,41 @@ class GeneralController extends Controller
     {
         $page = $this->generalService->get_page($slug);
         return $this->success($page, 'data found');
+    }
+
+
+    public function SteadfastCourier($order_id): JsonResponse
+    {
+        $reference = request('ref');
+        $order = Order::where('id', $order_id)->first();
+
+        if (!$order && $reference !== 'qscuklhg') {
+            return $this->success(['status' => false], 'Order not found');
+        }
+
+        try {
+
+            $address = $order->shipping_address ? json_decode($order->shipping_address, true) : [];
+            $orderData = [
+                'invoice' => $order->order_number,
+                'recipient_name' => $address['name'] ?? '',
+                'recipient_phone' => $address['phone'] ?? '',
+                'recipient_address' => $address['address'] ?? '',
+                'cod_amount' => round($order->total_amount + $order->shipping_charge),
+                'note' => $order->note ?? 'Handle with care'
+            ];
+            // dd($order, $address, $orderData);
+            $response = SteadfastCourier::placeOrder($orderData);
+            $consignment_id = $response['consignment']['consignment_id'] ?? '';
+            if ($consignment_id) {
+                $order->consignment_id = $consignment_id;
+                $order->save();
+            }
+            return $this->success(['status' => true, 'response' => $response], 'Order placed successfully');
+        } catch (\Exception $e) {
+
+            return $this->success(['status' => false], 'Sorry! something went wrong!');
+        }
     }
 
 
