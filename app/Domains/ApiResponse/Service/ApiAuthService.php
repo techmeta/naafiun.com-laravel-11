@@ -6,9 +6,8 @@ use App\Domains\ApiResponse\Resources\CustomerResource;
 use App\Domains\Auth\Events\User\UserCreated;
 use App\Domains\Auth\Events\User\UserLoggedIn;
 use App\Domains\Auth\Events\User\UserRegisterOTP;
-use App\Domains\Auth\Models\User;
-use App\Domains\Auth\Models\UserRegistration;
 use App\Domains\Cart\Models\Address;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -79,10 +78,8 @@ class ApiAuthService
 
     public function checkExistsCustomer(): array
     {
-        $otpCode = randomOTPCode();
-        $phone = request('phone', null);
-        $email = request('email', null);
-        if (!$phone && !$email) {
+        $email = request('email', '');
+        if (!$email) {
             return [
                 'code' => 422,
                 'message' => "phone or email is not available",
@@ -90,45 +87,35 @@ class ApiAuthService
             ];
         }
 
-        if ($phone) {
-            $user = User::query()->where('phone', $phone)->first();
-        } else {
-            $user = User::query()->where('email', $email)->first();
-        }
+        $otpCode = rand(100000, 999999);
+        $user = User::query()->where('email', $email)->first();
 
-        if ($user) {
+
+        if ($user && $user->otp_verified_at) {
             return [
                 'code' => 200,
                 'message' => "auth checked!",
                 'data' => [
                     "login" => true,
                     "email" => $email,
-                    "phone" => $phone,
                 ]
             ];
         }
 
-        $register = UserRegistration::query()
-            ->where('email', $email)
-            ->whereIn('status', ['new', 'blocked'])
-            ->first();
-
-        if ($register && $register->status === 'blocked') {
-            return [
-                'code' => 422,
-                'message' => "Sorry! Registration disable now, Try later!",
-                'data' => null
-            ];
+        if ($user) {
+            $user->email = $email;
+            $user->otp_code = $otpCode;
+            $user->otp_expired_at = now()->addMinutes(15);
+            $user->save();
+            $register = $user;
+        } else {
+            $register = new User();
+            $register->phone = '';
+            $register->email = $email;
+            $register->otp_code = $otpCode;
+            $register->otp_expired_at = now()->addMinutes(15);
+            $register->save();
         }
-
-        $register = $register ?: new UserRegistration();
-        $register->uuid = Uuid::uuid4();
-        $register->phone = $phone;
-        $register->email = $email;
-        $register->otp_code = $otpCode;
-        $register->otp_expired = now()->addMinutes(15);
-        $register->attempt_count = $register ? ($register->attempt_count + 1) : 1;
-        $register->save();
 
         event(new UserRegisterOTP($register));
 
@@ -136,9 +123,8 @@ class ApiAuthService
             'code' => 200,
             'message' => "OTP send to you Successfully!",
             'data' => [
-                "uuid" => $register->uuid,
+                "uuid" => $user->id,
                 "email" => $email,
-                "phone" => $phone,
             ]
         ];
 
@@ -167,7 +153,7 @@ class ApiAuthService
                     'message' => "Login successfully!",
                     'data' => [
                         "token" => $user->createToken($user->email)->plainTextToken,
-                        "user" => $user->only('active', 'name', 'phone', 'email', 'email_verified_at'),
+                        "user" => $user->only('id','active', 'name', 'phone', 'email', 'email_verified_at'),
                     ]
                 ];
             }

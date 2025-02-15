@@ -46,7 +46,7 @@ Route::group(['prefix' => 'v1', 'as' => 'v1.'], function () {
         Route::post('/place-order', [CustomerCartController::class, 'placedOrder']);
 
 
-        //         below not tested
+        //============below not tested
         Route::post('/store-credit', [CustomerCartController::class, 'storeCredit'])->middleware('auth:sanctum');  // not functional
         Route::post('/cut-of-time', [CustomerCartController::class, 'cutOfTime'])->middleware('auth:sanctum');  // not functional
         Route::post('/shipping', [CustomerCartController::class, 'addShippingAddress'])->middleware('auth:sanctum'); // not functional
@@ -57,6 +57,21 @@ Route::group(['prefix' => 'v1', 'as' => 'v1.'], function () {
     });
 
 
+    // sanctum auth user
+    Route::post('/login', [ApiAuthController::class, 'loginCustomer']);
+    Route::post('/check-exists-customer', [ApiAuthController::class, 'checkExistsCustomer']);
+    Route::get('/user', [ApiAuthController::class, 'authUser']);
+
+    Route::post('/verify-otp', [ApiAuthController::class, 'OtpVerifyOtpCode']);
+
+    Route::post('/resend-otp', [ApiAuthController::class, 'resendOtpCode']);
+    Route::post('/reset-otp-verify', [ApiAuthController::class, 'OtpVerifyOtpCode']);
+    Route::post('/register-customer', [ApiAuthController::class, 'registerCustomer']);
+    Route::post('/forgot-password', [ApiAuthController::class, 'forgotPassword']);
+    Route::post('/reset-password', [ApiAuthController::class, 'resetPassword']);
+    Route::post('/logout', [ApiAuthController::class, 'logout'])->middleware('auth:sanctum');
+
+
     //     ============== below is not tested ==============
 
     Route::post('/login-as-customer/{token}', [GeneralController::class, 'loginAsCustomer']);
@@ -64,17 +79,6 @@ Route::group(['prefix' => 'v1', 'as' => 'v1.'], function () {
 
     Route::post('/contact/message', [GeneralController::class, 'contactMessageSend']);
 
-    // sanctum auth user
-    Route::get('/user', [ApiAuthController::class, 'authUser']);
-    Route::post('/check-exists-customer', [ApiAuthController::class, 'checkExistsCustomer']);
-    Route::post('/resend-otp', [ApiAuthController::class, 'resendOtpCode']);
-    Route::post('/verify-otp', [ApiAuthController::class, 'OtpVerifyOtpCode']);
-    Route::post('/reset-otp-verify', [ApiAuthController::class, 'OtpVerifyOtpCode']);
-    Route::post('/register-customer', [ApiAuthController::class, 'registerCustomer']);
-    Route::post('/login', [ApiAuthController::class, 'loginCustomer']);
-    Route::post('/forgot-password', [ApiAuthController::class, 'forgotPassword']);
-    Route::post('/reset-password', [ApiAuthController::class, 'resetPassword']);
-    Route::post('/logout', [ApiAuthController::class, 'logout'])->middleware('auth:sanctum');
 
     Route::get('/menus', [GeneralController::class, 'menus']);
     Route::get('/categories', [GeneralController::class, 'categories']);

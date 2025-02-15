@@ -1,0 +1,9 @@
+
+
+
+# ALTER TABLE `users` ADD `otp_expired_at` TIMESTAMP NULL AFTER `otp_code`;
+
+
+# ALTER TABLE `users` CHANGE `name` `name` VARCHAR(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL;
+
+# ALTER TABLE `personal_access_tokens` ADD `expires_at` TIMESTAMP NULL AFTER `last_used_at`;
