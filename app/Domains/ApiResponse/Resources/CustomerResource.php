@@ -2,7 +2,6 @@
 
 namespace App\Domains\ApiResponse\Resources;
 
-use App\Domains\Auth\Models\Permission;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Resources\Json\JsonResource;

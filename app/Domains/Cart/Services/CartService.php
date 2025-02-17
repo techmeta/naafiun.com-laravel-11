@@ -98,7 +98,7 @@ class CartService
         $quantity = request('quantity');
         $config_sku = $product->id;
         $regular_price = $product->sale_price;
-        $sale_price =$product->discount_price;
+        $sale_price = $product->discount_price;
         $sale_price = $sale_price && $regular_price > $sale_price ? $sale_price : $regular_price;
         $discount_amt = $sale_price && $regular_price > $sale_price ? ((int)$regular_price - (int)$sale_price) : 0;
         $discount_amt = max($discount_amt, 0);
@@ -453,7 +453,6 @@ class CartService
                         event(new OrderPlacedCouponEvent($order, $cart, $couponDiscount));
                     }
                 }
-
 
                 CustomerCartItem::query()
                     ->where('cart_id', $cart->id)
