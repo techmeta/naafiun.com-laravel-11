@@ -7,6 +7,8 @@ use App\Domains\ApiResponse\Request\ApiProfileUpdateRequest;
 use App\Domains\ApiResponse\Request\ApiRegisterRequest;
 use App\Domains\ApiResponse\Service\ApiAuthService;
 use App\Http\Controllers\Controller;
+use App\Models\PasswordReset;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -104,7 +106,7 @@ class ApiAuthController extends Controller
         return $this->success($data, $message, $code);
     }
 
-    public function resetPassword(Request $request)
+    public function resetPassword(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
             'email' => ['required', 'string', 'email'],
@@ -113,7 +115,7 @@ class ApiAuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response(['status' => false, 'errors' => $validator->errors(), 'message' => 'Type your valid email'], 422);
+            return response()->json(['status' => false, 'errors' => $validator->errors(), 'message' => 'Type your valid email'], 422);
         }
         $data = $this->apiAuthService->resetPassword();
         $message = $data['message'] ?? '';

@@ -2,7 +2,7 @@
 
 namespace App\Domains\Auth\Events\User;
 
-use App\Models\User;
+use App\Models\UserRegistration;
 use Illuminate\Queue\SerializesModels;
 
 /**
@@ -13,14 +13,14 @@ class UserRegisterOTP
     use SerializesModels;
 
     /**
-     * @var User
+     * @var UserRegistration
      */
-    public User $user;
+    public UserRegistration $user;
 
     /**
-     * @param User $user
+     * @param UserRegistration $user
      */
-    public function __construct(User $user)
+    public function __construct(UserRegistration $user)
     {
         $this->user = $user;
     }

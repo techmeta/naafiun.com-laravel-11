@@ -2,7 +2,7 @@
 
 namespace App\Mail;
 
-use App\Models\User;
+use App\Models\UserRegistration;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -13,14 +13,14 @@ class OTPEmail extends Mailable implements ShouldQueue
     use Queueable, SerializesModels;
 
     /**
-     * @var User
+     * @var UserRegistration
      */
-    public User $otpUser;
+    public UserRegistration $otpUser;
 
     /**
-     * @param User $otpUser
+     * @param UserRegistration $otpUser
      */
-    public function __construct(User $otpUser)
+    public function __construct(UserRegistration $otpUser)
     {
         $this->otpUser = $otpUser;
     }

@@ -59,16 +59,14 @@ Route::group(['prefix' => 'v1', 'as' => 'v1.'], function () {
 
     // sanctum auth user
     Route::post('/login', [ApiAuthController::class, 'loginCustomer']);
-    Route::post('/check-exists-customer', [ApiAuthController::class, 'checkExistsCustomer']);
     Route::get('/user', [ApiAuthController::class, 'authUser']);
     Route::post('/logout', [ApiAuthController::class, 'logout']);
-
+    Route::post('/check-exists-customer', [ApiAuthController::class, 'checkExistsCustomer']);
     Route::post('/verify-otp', [ApiAuthController::class, 'OtpVerifyOtpCode']);
-
     Route::post('/resend-otp', [ApiAuthController::class, 'resendOtpCode']);
-    Route::post('/reset-otp-verify', [ApiAuthController::class, 'OtpVerifyOtpCode']);
     Route::post('/register-customer', [ApiAuthController::class, 'registerCustomer']);
     Route::post('/forgot-password', [ApiAuthController::class, 'forgotPassword']);
+    Route::post('/reset-otp-verify', [ApiAuthController::class, 'OtpVerifyOtpCode']);
     Route::post('/reset-password', [ApiAuthController::class, 'resetPassword']);
 
 

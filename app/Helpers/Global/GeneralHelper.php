@@ -207,6 +207,7 @@ if (!function_exists('general_settings')) {
     /**
      * Helper to grab the application name.
      *
+     * @param bool $json
      * @return mixed
      */
     function general_settings($json = false): mixed
@@ -246,5 +247,13 @@ if (!function_exists('hasArrayKeyOrData')) {
     function hasArrayKeyOrData($key, $array): bool
     {
         return array_key_exists($key, $array) || in_array($key, $array);
+    }
+}
+
+
+if (!function_exists('randomOTPCode')) {
+    function randomOTPCode(): int
+    {
+        return $otpCode = rand(100000, 999999);
     }
 }
